@@ -208,13 +208,13 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
     for (t in 1:k) {
       top_indices = sort(phi[t,], decreasing=T, index.return=T)$ix
       top_words = WO[top_indices[1:10]]
-      writeLines(cat(sprintf("Topic: %i", t), top_words))
+      cat(sprintf("Topic: %i", t), top_words, "\n")
     }
     
     
     for (d in 1:D) {
       top_indices = sort(theta[d,], decreasing=T, index.return=T)$ix
-      writeLines(cat(sprintf("Doc %i:", d), top_indices))
+      cat(sprintf("Doc %i:", d), top_indices, "\n")
     }
 }
   
