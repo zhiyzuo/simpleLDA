@@ -224,7 +224,9 @@ LDA = function() {
   z_states = GibbsSamplerLDA(args[1], args[2], as.numeric(args[3]), as.numeric(args[4]), as.numeric(args[5]), as.numeric(args[6]))
 }
 
+time = proc.time()
 LDA()
+sprintf("Elapsed time: %f", (proc.time()-time)[3])
 #z_states=GibbsSamplerLDA("test_mat.txt", "test_voc.txt", 3, 0.01, 0.01, 10)
 
 
