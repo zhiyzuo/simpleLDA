@@ -216,12 +216,14 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
       top_indices = sort(theta[d,], decreasing=T, index.return=T)$ix
       cat(sprintf("Doc %i:", d), top_indices, "\n")
     }
+    return(z_states)
 }
   
 LDA = function() {
-  args <- commandArgs(trailingOnly = TRUE)
-  GibbsSamplerLDA(args[1], args[2], as.numeric(args[3]), as.numeric(args[4]), as.numeric(args[5]), as.numeric(args[6]))
+  args = commandArgs(trailingOnly = TRUE)
+  z_states = GibbsSamplerLDA(args[1], args[2], as.numeric(args[3]), as.numeric(args[4]), as.numeric(args[5]), as.numeric(args[6]))
 }
 
-LDA()
+z_states=GibbsSamplerLDA("test_mat.txt", "test_voc.txt", 3, 0.01, 0.01, 10)
+
 
