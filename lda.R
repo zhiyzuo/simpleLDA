@@ -202,6 +202,15 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
         theta[d,t] = (n_d_t + alpha)/(n_d + k*alpha)
       }
     }
+
+    colnames(theta) = mapply(function(x) paste("Topic ",x), 1:k)
+    rownames(theta) = mapply(function(x) paste("Document ",x), 1:D)
+
+    colnames(phi) = WO
+    rownames(phi) = mapply(function(x) paste("Topic ",x), 1:k)
+
+    write.csv(phi, './lda-phi.csv')
+    write.csv(theta, './lda-theta.csv')
     
     print(topic_distribution)
     
