@@ -167,42 +167,54 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
     
     # discard the first half as burn in
     approximate_states = z_states[,as.integer(N/2):N]
-    
-    # get topic distributions
-    topic_distribution = c()
+
+    # contruct WP and DP matrices
+    WP = matrix(data=-1, nrow=V, ncol=k)
+    DP = matrix(data=-1, nrow=D, ncol=k)
+
+    for (iter_ in 1:dim(approximate_states)[2]) {
+        iter_states = approximate_states[,iter_]
+        for (idx in 1:nnz) {
+            topic_idx = iter_states[idx]
+            wi = WS[idx]
+            di = DS[idx]
+            WP[wi, topic_idx] = WP[wi, topic_idx] + 1
+            DP[di, topic_idx] = DP[di, topic_idx] + 1
+        }
+    }
     
     # get topic-word distribution: matrix with shape(k, V)
     phi = matrix(data=-1, nrow = k, ncol = V)
     
+    # get topic distributions
+    topic_distribution = colSums(WP)/sum(WP)
+    print(topic_distribution)
+    
     for (t in 1:k){
-      # total times of words assigned to Topit t
-      n_t = length(which(approximate_states==t, T))/2
-      # topic proportion
-      topic_distribution = c(topic_distribution, n_t/length(approximate_states))
-      
-      # total number of times w assigned to Topic t
-      for (w in 1:V){
-        indices = which(WS==w, T)
-        n_w_t = length(which(approximate_states[indices, ]==t, T))/2
-        phi[t,w] = (n_w_t + beta)/(n_t+W*beta)
-      }
+        wp = WP[, t]    
+        # number of topic t
+        n_t = sum(wp)
+        for (w in 1:V) {
+            # number of times w assigned to topic t
+            n_w_t = wp[t]
+            phi[t, w] = (n_w_t + beta) / (n_t + V*beta)
+        }
     }
     
+
     # get doc-topic distribution: matrix with shape(D, k)
     theta = matrix(data=-1, nrow = D, ncol = k)
     
-    for (d in 1:D){
-      # total times of words in Document d
-      n_d = length(which(DS == d, T))
-      
-      # total number of times d assigned to Topic t
-      for (t in 1:k){
-        indices = which(DS==d, T)
-        n_d_t = length(which(approximate_states[indices, ]==t, T))/2
-        theta[d,t] = (n_d_t + alpha)/(n_d + k*alpha)
-      }
+    for (d in 1:D) {
+        # number of words in d
+        n_d = length(which(DS == d, T))
+        for (t in 1:k) {
+            # number of times d assigned to topic t
+            n_d_t = DP[d,t]
+            theta[d, t] = 
+        }
     }
-
+    
     colnames(theta) = mapply(function(x) paste("Topic ",x), 1:k)
     rownames(theta) = mapply(function(x) paste("Document ",x), 1:D)
 
@@ -211,8 +223,6 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
 
     write.csv(phi, './lda-phi.csv')
     write.csv(theta, './lda-theta.csv')
-    
-    print(topic_distribution)
     
     for (t in 1:k) {
       top_indices = sort(phi[t,], decreasing=T, index.return=T)$ix
