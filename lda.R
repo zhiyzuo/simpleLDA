@@ -169,8 +169,13 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
     approximate_states = z_states[,as.integer(N/2):N]
 
     # contruct WP and DP matrices
+<<<<<<< HEAD
     WP = matrix(data=0, nrow=V, ncol=k)
     DP = matrix(data=0, nrow=D, ncol=k)
+=======
+    WP = matrix(data=-1, nrow=V, ncol=k)
+    DP = matrix(data=-1, nrow=D, ncol=k)
+>>>>>>> 43f0d489c3321eea2a39fcff91ea8069dddbd439
 
     for (iter_ in 1:dim(approximate_states)[2]) {
         iter_states = approximate_states[,iter_]
@@ -196,7 +201,11 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
         n_t = sum(wp)
         for (w in 1:V) {
             # number of times w assigned to topic t
+<<<<<<< HEAD
             n_w_t = wp[w]
+=======
+            n_w_t = wp[t]
+>>>>>>> 43f0d489c3321eea2a39fcff91ea8069dddbd439
             phi[t, w] = (n_w_t + beta) / (n_t + V*beta)
         }
     }
@@ -207,11 +216,19 @@ GibbsSamplerLDA = function(mat_txt, vocab_txt, k, alpha, beta, N){
     
     for (d in 1:D) {
         # number of words in d
+<<<<<<< HEAD
         n_d = sum(DP[d,])
         for (t in 1:k) {
             # number of times d assigned to topic t
             n_d_t = DP[d,t]
             theta[d, t] = (n_d_t + alpha) / (n_d + k*alpha)
+=======
+        n_d = length(which(DS == d, T))
+        for (t in 1:k) {
+            # number of times d assigned to topic t
+            n_d_t = DP[d,t]
+            theta[d, t] = 
+>>>>>>> 43f0d489c3321eea2a39fcff91ea8069dddbd439
         }
     }
     
